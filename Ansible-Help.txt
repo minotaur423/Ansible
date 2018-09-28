@@ -24,3 +24,7 @@ Install Ansible:
 
 7. Install Vagrant:
 	# yum -y install https://releases.hashicorp.com/vagrant/2.1.5/vagrant_2.1.5_x86_64.rpm
+
+8. Install the vagrant-proxyconf plugin:
+	# vagrant plugin install vagrant-proxyconf
+
