@@ -204,3 +204,107 @@ ansible all -b -m cron -a "name=archive-logs user=cidev state=absent"  --> To de
 
 ansible all -b -m cron -a "name=archive-logs state=absent"  --> To delete cron job for user root.
 
+10/2/2018
+
+[vagrant@client ~]$ wget -O CodeIgniter.zip https://codeload.github.com/bcit-ci/CodeIgniter/zip/3.1.4
+
+[vagrant@client ~]$ yum install unzip
+
+[vagrant@client ~]$ unzip CodeIgniter.zip
+
+[vagrant@client ~]$ unzip CodeIgniter.zip
+
+[vagrant@client ~]$ sudo yum install rsync
+
+[vagrant@client ~]$ vi db_vars.yml
+*************************************************************************************************
+root_password: mypassword
+database:
+  host: 192.168.33.30
+  name: appdb
+  username: codeigniter
+  password: cipassword
+*************************************************************************************************
+[vagrant@client ~]$ vi lamp.yml
+*************************************************************************************************
+---
+- hosts: web
+  become: yes
+  handlers:
+    - name: restart Apache.
+      service: name=httpd state=restarted
+  pre_tasks:
+    - name: Create a developers group.
+      group:
+        name: developers
+        state: present
+    - name: Create an application user.
+      user:
+        name: developers
+        comment: The CodeIgniter user
+        group: developers
+        state: present
+  post_tasks:
+    - name: Change the ownership of CodeIgniter to be owned by cidev and developers group.
+      file:
+        path: /var/www/html/
+        owner: cidev
+        group: developers
+        state: directory
+        recurse: yes
+  tasks:
+   - name: Install PHP 7 most common packages.
+     yum: name={{ item }} state=present
+     with_items:
+       - mod_php71w
+       - php71w-cli
+       - php71w-common
+       - php71w-gd
+       - php71w-mbstring
+       - php71w-mcrypt
+       - php71w-mysqlnd
+       - php71w-xml
+   - name: Ensure that rsync is installed.
+     yum: name=rsync state=present
+   - name: Upload CodeIgniter files.
+     synchronize:
+       src: CodeIgniter-3.1.4/
+       dest: /var/www/html/
+   - name: Ensure that mod_rewrite is enabled on Apache.
+     lineinfile:
+       path: /etc/httpd/conf.modules.d/00-base.conf
+       regexp: '^.*rewrite_module.*$'
+       line: 'LoadModule rewrite_module modules/mod_rewrite.so'
+       state: present
+     notify:
+       - restart Apache
+- hosts: db
+  vars_files:
+    - db_vars.yml
+  become: yes
+  tasks:
+    - name: Ensure that MariaDB is installed.
+      yum:
+        name: '{{ item }}'
+        state: present
+      with_items:
+        - MySQL-python
+        - mariadb-server
+    - name: Create an application database.
+      mysql_db:
+        name: '{{ database.name }}'
+        state: present
+        login_user: root
+        login_password: '{{ root_password }}'
+    - name: Create application user.
+      mysql_user:
+        name: '{{ database.username }}'
+        password: '{{ database.password }}'
+        host: '%'
+        priv: '{{ database.name }}.*:ALL'
+        login_user: root
+        login_password: '{{ root_password }}'
+        state: present
+*************************************************************************************************
+[vagrant@client ~]$ ansible-playbook lamp.yml [--limit web]
+
