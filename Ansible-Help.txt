@@ -1,0 +1,30 @@
+Configure Hyper-V machine for Nested Virtualization:
+1. Open PowerShell as Administrator and run the following command:
+	$ Set-VMProcessor -VMName Ansible -ExposeVirtualizationExtensions $true
+
+Install Ansible:
+1. Install Git.
+
+2. Install Python3.6u
+
+3. Install Ansible:
+	# pip3.6 install ansible --upgrade ansible
+
+4. Install VirtualBox dependiencies:
+	# yum -y install gcc dkms make qt libgomp patch
+	# yum -y install kernel-headers kernel-devel binutils glibc-headers glibc-devel fontforge
+
+5. Add VirtualBox repository:
+	# cd /etc/yum.repos.d/
+	# wget http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo
+
+6. Install and build kernel module:
+	# yum install -y VirtualBox-5.2
+	# /sbin/rcvboxdrv setup
+
+7. Install Vagrant:
+	# yum -y install https://releases.hashicorp.com/vagrant/2.1.5/vagrant_2.1.5_x86_64.rpm
+
+8. Install the vagrant-proxyconf plugin:
+	# vagrant plugin install vagrant-proxyconf
+
