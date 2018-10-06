@@ -226,27 +226,37 @@ ansible all -b -m cron -a "name=archive-logs state=absent"  --> To delete cron j
 
 [vagrant@client ~]$ sudo yum install rsync
 
+*************************************************************************************************
+[vagrant@client ~]$ vi db_vars.yml
+root_password: mypassword
+database:
+  host: 192.168.33.30
+  name: appdb
+  username: codeigniter
+  password: cipassword
+*************************************************************************************************
+
 [vagrant@client ~]$ vi lamp.yml
 *************************************************************************************************
 ---
-- hosts: all
+- hosts: web
   become: yes
   handlers:
-    - name: restart Apache
+    - name: restart Apache.
       service: name=httpd state=restarted
   pre_tasks:
-    - name: Create a developers group
+    - name: Create a developers group.
       group:
         name: developers
         state: present
-    - name: Create an application user
+    - name: Create an application user.
       user:
         name: developers
         comment: The CodeIgniter user
         group: developers
         state: present
   post_tasks:
-    - name: Change the ownership of CodeIgniter to be owned by cidev and developers group
+    - name: Change the ownership of CodeIgniter to be owned by cidev and developers group.
       file:
         path: /var/www/html/
         owner: cidev
@@ -279,5 +289,33 @@ ansible all -b -m cron -a "name=archive-logs state=absent"  --> To delete cron j
        state: present
      notify:
        - restart Apache
+- hosts: db
+  vars_files:
+    - db_vars.yml
+  become: yes
+  tasks:
+    - name: Ensure that MariaDB is installed.
+      yum:
+        name: '{{ item }}'
+        state: present
+      with_items:
+        - MySQL-python
+        - mariadb-server
+    - name: Create an application database.
+      mysql_db:
+        name: '{{ database.name }}'
+        state: present
+        login_user: root
+        login_password: '{{ root_password }}'
+    - name: Create application user.
+      mysql_user:
+        name: '{{ database.username }}'
+        password: '{{ database.password }}'
+        host: '%'
+        priv: '{{ database.name }}.*:ALL'
+        login_user: root
+        login_password: '{{ root_password }}'
+        state: present
 *************************************************************************************************
 [vagrant@client ~]$ ansible-playbook lamp.yml --limit web
+[vagrant@client ~]$ ansible-playbook lamp.yml 
