@@ -9,10 +9,10 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  if Vagrant.has_plugin?("vagrant-proxyconf")
-    config.proxy.http = "http://bcpxy.nycnet:8080/"
-    config.proxy.https = "http://bcpxy.nycnet:8080/"
-    config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
+#  if Vagrant.has_plugin?("vagrant-proxyconf")
+#    config.proxy.http = "http://bcpxy.nycnet:8080/"
+#    config.proxy.https = "http://bcpxy.nycnet:8080/"
+#    config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
   end
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -105,6 +105,9 @@ end
    become: yes
    tasks:
        - name: Ensure that Apache web server is installed
+         environment:
+           http_proxy: http://bcpxy.nycnet:8080
+           https_proxy: http://bcpxy.nycnet:8080
          yum: 
              name: httpd 
              state: present
@@ -125,6 +128,9 @@ vi /etc/ansible/hosts
 [vagrant@client ~]$ ssh-keygen -t RSA
 [vagrant@client ~]$ ssh-copy-id 192.168.33.20
 [vagrant@client ~]$ ssh-copy-id 192.168.33.30
+http_proxy=http://bcpxy.nycnet:8080
+https_proxy=http://bcpxy.nycnet:8080
+export http_proxy https_proxy
 
 ### From client server: ###
 ansible db -b -m yum -a 'name=mariadb,mariadb-server state=present'
@@ -148,7 +154,11 @@ ansible web -b -m yum -a 'name=mysql'
 # Configure EPEL and Webtatic repositories on the web server machine
 ansible web -b -m yum_repository -a "name=epel description='EPEL repository' baseurl='https://download.fedoraproject.org/pub/epel/\$releaserver/\$basearch/' gpgcheck=no state=present"
 
+ansible web -b -m yum -a 'name=epel-release state=present'
+
 ansible web -b -m yum_repository -a "name=webtatic description='Webtatic repository' baseurl='https://repo.webtatic.com/yum/el7/\$basearch/' gpgcheck=no state=present"
+
+ansible web -b -m yum -a 'name=https://mirror.webtatic.com/yum/el7/webtatic-release.rpm state=present'
 
 ansible web -b -m group -a "name=developers state=present"
 
@@ -186,6 +196,8 @@ ansible web -m copy -a 'content="" dest=/home/vagrant/newfile.txt'  --> To creat
 
 ansible web -b -m file -a 'path=/home/vagrant/newfile.txt owner=cidev group=developers mode=700' --> To manipulate the contents of /home/vagrant/newfile.txt
 
+ansible web -b -m lineinfile -a 'path=/home/vagrant/newfile.txt line="This is a test line inserted using Ansible."'
+
 ansible web -m file -a 'src=/etc/hosts dest=/tmp/hosts state=link'  --> To create a symbolic link to /etc/hosts in /tmp/hosts.
 
 ansible web -m file -a 'path=/home/vagrant/newfile.txt state=absent'  --> To delete file /home/vagrant/newfile.txt.
@@ -209,8 +221,6 @@ ansible all -b -m cron -a "name=archive-logs state=absent"  --> To delete cron j
 [vagrant@client ~]$ wget -O CodeIgniter.zip https://codeload.github.com/bcit-ci/CodeIgniter/zip/3.1.4
 
 [vagrant@client ~]$ yum install unzip
-
-[vagrant@client ~]$ unzip CodeIgniter.zip
 
 [vagrant@client ~]$ unzip CodeIgniter.zip
 
@@ -271,4 +281,3 @@ ansible all -b -m cron -a "name=archive-logs state=absent"  --> To delete cron j
        - restart Apache
 *************************************************************************************************
 [vagrant@client ~]$ ansible-playbook lamp.yml --limit web
-
