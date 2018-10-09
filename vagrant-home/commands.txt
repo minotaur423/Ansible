@@ -97,13 +97,18 @@ Vagrant.configure("2") do |config|
   end
 end
 #######################################################################
-
+[jsantos@ansible centos]$ vi myplaybook.yml
 ### Playbook Contents ###
 
 #######################################################################
  - hosts: all
    become: yes
    tasks:
+       - name: Ensure that Proxy server is set.
+         lineinfile:
+             path: /etc/yum.conf
+             line: proxy=http://bcpxy.nycnet:8080
+             state: present
        - name: Ensure that Apache web server is installed
          environment:
            http_proxy: http://bcpxy.nycnet:8080
@@ -228,35 +233,63 @@ ansible all -b -m cron -a "name=archive-logs state=absent"  --> To delete cron j
 
 *************************************************************************************************
 [vagrant@client ~]$ vi db_vars.yml
+*************************************************************************************************
 root_password: mypassword
 database:
   host: 192.168.33.30
   name: appdb
   username: codeigniter
   password: cipassword
-*************************************************************************************************
 
+*************************************************************************************************
+[vagrant@client ~]$ cat create.sql
+*************************************************************************************************
+use appdb;
+CREATE TABLE IF NOT EXISTS news (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  title varchar(128) NOT NULL,
+  slug varchar(128) NOT NULL,
+  text text NOT NULL,
+  PRIMARY KEY (id),
+  KEY slug (slug)
+);
+INSERT INTO news (title,slug,text) VALUES ('Welcome to CodeIgniter', 'welcome-to-codeigniter', 'This proves that database connection is configured properly');
+
+*************************************************************************************************
 [vagrant@client ~]$ vi lamp.yml
 *************************************************************************************************
 ---
 - hosts: web
   become: yes
+  vars_files:
+    - db_vars.yml
   handlers:
-    - name: restart Apache.
+    - name: Restart Apache
       service: name=httpd state=restarted
   pre_tasks:
-    - name: Create a developers group.
+    - name: Install the EPEL repository
+      yum:
+        name: epel-release
+        state: present
+    - name: Install the webtatic repository
+      yum_repository:
+        name: webtatic
+        description: "Webtatic Repository"
+        baseurl: 'https://repo.webtatic.com/yum/el7/\$basearch/'
+        gpgcheck: no
+        state: present
+    - name: Create a developers group
       group:
         name: developers
         state: present
-    - name: Create an application user.
+    - name: Create an application user
       user:
-        name: developers
+        name: cidev
         comment: The CodeIgniter user
         group: developers
         state: present
   post_tasks:
-    - name: Change the ownership of CodeIgniter to be owned by cidev and developers group.
+    - name: Change the ownership of CodeIgniter to be owned by cidev and developers group
       file:
         path: /var/www/html/
         owner: cidev
@@ -264,7 +297,7 @@ database:
         state: directory
         recurse: yes
   tasks:
-   - name: Install PHP 7 most common packages.
+   - name: Install PHP 7 most common packages
      yum: name={{ item }} state=present
      with_items:
        - mod_php71w
@@ -275,39 +308,56 @@ database:
        - php71w-mcrypt
        - php71w-mysqlnd
        - php71w-xml
-   - name: Ensure that rsync is installed.
+   - name: Ensure that rsync is installed
      yum: name=rsync state=present
-   - name: Upload CodeIgniter files.
+   - name: Upload CodeIgniter files
      synchronize:
        src: CodeIgniter-3.1.4/
        dest: /var/www/html/
-   - name: Ensure that mod_rewrite is enabled on Apache.
+   - name: Ensure that mod_rewrite is enabled on Apache
      lineinfile:
        path: /etc/httpd/conf.modules.d/00-base.conf
        regexp: '^.*rewrite_module.*$'
        line: 'LoadModule rewrite_module modules/mod_rewrite.so'
        state: present
      notify:
-       - restart Apache
+       - Restart Apache
+   - name: Configure the application with the database settings
+     template:
+       src: templates/application/config/database.php.jn2
+       dest: /var/www/html/application/config/database.php
+     notify:
+       - Restart Apache
+   - name: Deploy sample CodeIgniter files
+     copy:
+       src: '{{ item.src }}'
+       dest: '{{ item.dest }}'
+     with_items:
+       - src: files/models/News_model.php
+         dest: /var/www/html/application/models/News_model.php
+       - src: files/controllers/News.php
+         dest: /var/www/html/application/controllers/News.php
+       - src: files/views/news_article.php
+         dest: /var/www/html/application/views/news_article.php
 - hosts: db
   vars_files:
     - db_vars.yml
   become: yes
   tasks:
-    - name: Ensure that MariaDB is installed.
+    - name: Ensure that MariaDB is installed
       yum:
         name: '{{ item }}'
         state: present
       with_items:
         - MySQL-python
         - mariadb-server
-    - name: Create an application database.
+    - name: Create an application database
       mysql_db:
         name: '{{ database.name }}'
         state: present
         login_user: root
         login_password: '{{ root_password }}'
-    - name: Create application user.
+    - name: Create application user
       mysql_user:
         name: '{{ database.username }}'
         password: '{{ database.password }}'
@@ -316,6 +366,17 @@ database:
         login_user: root
         login_password: '{{ root_password }}'
         state: present
+    - name: Upload the table creation script
+      copy:
+        src: /home/vagrant/create.sql
+        dest: /tmp/
+    - name: Create an application table and add some records
+      mysql_db:
+        state: import
+        name: '{{ database.name }}'
+        target: /tmp/create.sql
+        login_user: root
+        login_password: '{{ root_password }}'
 *************************************************************************************************
 [vagrant@client ~]$ ansible-playbook lamp.yml --limit web
 [vagrant@client ~]$ ansible-playbook lamp.yml 
