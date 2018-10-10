@@ -1,5 +1,4 @@
 __pycache__
 *.log
-ansible-machines/centos/.vagrant
-ansible-machines/ubuntu/.vagrant
+ansible-machines/.vagrant
 *.swp

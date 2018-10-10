@@ -1,0 +1,5 @@
+ - hosts: web
+   tasks:
+     - copy:
+         content: 'My name is {{ name }}'
+         dest: /home/vagrant/name.txt
