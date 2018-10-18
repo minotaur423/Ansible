@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS news (
   PRIMARY KEY (id),
   KEY slug (slug)
 );
-INSERT INTO news (title,slug,text) VALUES ('Welcome to CodeIgniter','welcome-to-codeigniter','This proves that database connection is configured properly');
+INSERT INTO news (title,slug,text) VALUES ('Welcome to CodeIgniter', 'welcome-to-codeigniter', 'This proves that database connection is configured properly');

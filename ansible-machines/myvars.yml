@@ -1,5 +1,17 @@
- - hosts: web
+ - hosts: db
+   vars_prompt:
+     - name: dbpass
+       prompt: "Enter the database password please"
    tasks:
-     - copy:
-         content: 'My name is {{ uname }}, I am {{ age }} years old and I work as a {{ job }}'
-         dest: /home/vagrant/name.txt
+     - name: Upload create.sql
+       become: yes
+       copy:
+         src: /home/vagrant/create.sql
+         dest: /tmp/
+     - name: connect to mariadb
+       mysql_db:
+         name: appdb
+         login_user: root
+         login_password: '{{ dbpass }}'
+         state: import
+         target: /tmp/create.sql

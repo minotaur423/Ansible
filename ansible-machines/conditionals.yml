@@ -1,0 +1,9 @@
+ - hosts: web
+   tasks:
+     - name: Upgrade the kernel
+       become: yes
+       yum:
+         name: kernel
+       when:
+         - ansible_kernel != "3.10.0-862.11.6.el7.x86_64"
+         - ansible_os_family == "Redhat"
