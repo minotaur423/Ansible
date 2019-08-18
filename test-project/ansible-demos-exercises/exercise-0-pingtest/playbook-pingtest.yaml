@@ -1,0 +1,6 @@
+-
+  name: Check connectivity to target srevers
+  hosts: all
+  task:
+    - name: Ping test
+      ping:
