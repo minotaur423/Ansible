@@ -1,0 +1,10 @@
+# Sample Inventory File
+
+web1  ansible_host=web1.company.com   ansible_connection=ssh ansible_ssh_pass=P@ssW
+db    ansible_host=db.company.com     ansible_connection=winrm  ansible_ssh_pass=P@ssW
+web2  ansible_host=web2.company.com   ansible_connection=ssh ansible_ssh_pass=P@ssW
+
+[all_servers] # Group
+web1
+db
+web2
