@@ -1,0 +1,8 @@
+# Sample Ansible-Includes-Playbook.yml
+-
+   name: "Set Firewall Configurations"
+   hosts: web
+   var_files:
+         -  variables.yml
+   tasks:
+     - include: tasks.yml
