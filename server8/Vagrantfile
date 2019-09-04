@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "centos/7"
+  config.vm.box = "generic/rhel8"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -67,12 +67,12 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
-  config.vm.define "server7" do | server7 |
-    server7.vm.hostname = "server7"
-    server7.vm.network "private_network", ip: "192.168.122.11"
+  config.vm.define "server1" do | server1 |
+    server1.vm.hostname = "server1"
+    server1.vm.network "private_network", ip: "192.168.122.10"
   end
-  config.vm.define "client7" do | client7 |
-    client7.vm.hostname = "client7"
-    client7.vm.network "private_network", ip: "192.168.122.21"
+  config.vm.define "client1" do | client1 |
+    client1.vm.hostname = "client1"
+    client1.vm.network "private_network", ip: "192.168.122.20"
   end
 end
