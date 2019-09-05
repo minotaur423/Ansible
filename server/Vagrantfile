@@ -73,17 +73,19 @@ Vagrant.configure("2") do |config|
   #config.vm.define "node2" do | node2 |
   #  node2.vm.hostname = "node2"
   #end
-  config.vm.define "webserver" do |webserver|
-    webserver.vm.box = "centos/7"
-    webserver.vm.provider :libvirt do |libvirt|
+  config.vm.define "websrv7" do |websrv7|
+    websrv7.vm.network "private_network", ip: "192.168.122.107"
+    websrv7.vm.hostname = "web2"
+    websrv7.vm.provider :libvirt do |libvirt|
       libvirt.memory = 1024
-    end
+      end
   end
 
-  config.vm.define "database" do |database|
-    database.vm.box = "centos/7"
-    database.vm.provider :libvirt do |libvirt|
+  config.vm.define "dbase7" do |dbase7|
+    dbase7.vm.network "private_network", ip: "192.168.122.207"
+    dbase7.vm.hostname = "db2"
+    dbase7.vm.provider :libvirt do |libvirt|
       libvirt.memory = 1024
-    end
+      end
   end
 end
