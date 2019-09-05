@@ -1,0 +1,45 @@
+ useradd -r vagrant
+  133  id vagrant
+  134  passwd vagrant
+  135  visudo
+  136  su - vagrant
+  137  ll
+  138  cd ..
+  139  ll
+  140  chown vagrant:root server
+  141  chown vagrant:root server8
+  142  chown -R vagrant:root server8
+  143  chown -R vagrant:root server
+  144  su - vagrant
+  145  usermod -d /home/vagrant vagrant
+  146  mkdir /home/vagrant
+  147  chown -R vagrant:vagrant /home/vagrant
+  148  cat /etc/passwd
+  149  usermod -c "Vagrant User Account" vagrant
+  150  cat /etc/passwd
+  151  su - vagrant
+  152  ll
+  153  su - vagrant
+  154  cd server8/
+  155  ll
+  156  vagrant ssh websrv8
+  157  vagrant ssh dbase8
+  158  su vagrant
+  167  ansible c7servers -a "cat /etc/hosts" -u vagrant
+  168  ansible c7servers -m ping -u vagrant
+
+
+ssh-keygen -t rsa
+    3  cat .ssh/id_rsa.pub
+    4  pwd
+    5  vagrant status
+    6  exit
+    7  sudo vagrant status
+    8  ansible c7-servers -a "cat /etc/hosts"
+    9  ansible 192.168.122.200 -a "cat /etc/hosts"
+   10  ansible c7-servers -a "cat /etc/hosts"
+   13  exit
+   15  ansible 192.168.122.200 -m ping
+   16  ansible 192.168.122.100 -m ping
+   17  id -a
+   18  ansible c7servers -a "cat /etc/hosts"
