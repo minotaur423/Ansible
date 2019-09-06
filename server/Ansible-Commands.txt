@@ -1,0 +1,9 @@
+ansible c7db -b -m yum -a 'name=mariadb-server state=present' -u vagrant
+ansible c7db -b -m service -a 'name=mariadb-server state=started enabled=yes' -u vagrant
+ansible c7db -b -m service -a 'name=mariadb state=started enabled=yes' -u vagrant
+ssh vagrant@192.168.122.207
+ansible c7db -b -m yum -a 'name=MySQL-python state=present' -u vagrant
+ansible c7db -b -m mysql_user -a 'name=root host=localhost password=password' -u vagrant
+ssh vagrant@192.168.122.207
+ansible c7db -m mysql_user -a 'name=codeigniter host=% password=cipassword priv=appdb.*:ALL state=present login_user=root login_password=password' -u vagrant
+ansible c7db -m mysql_db -a 'name=appdb login_user=root login_password=password' -u vagrant
