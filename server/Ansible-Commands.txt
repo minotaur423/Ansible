@@ -1,9 +1,38 @@
-ansible c7db -b -m yum -a 'name=mariadb-server state=present' -u vagrant
-ansible c7db -b -m service -a 'name=mariadb-server state=started enabled=yes' -u vagrant
-ansible c7db -b -m service -a 'name=mariadb state=started enabled=yes' -u vagrant
-ssh vagrant@192.168.122.207
-ansible c7db -b -m yum -a 'name=MySQL-python state=present' -u vagrant
-ansible c7db -b -m mysql_user -a 'name=root host=localhost password=password' -u vagrant
-ssh vagrant@192.168.122.207
-ansible c7db -m mysql_user -a 'name=codeigniter host=% password=cipassword priv=appdb.*:ALL state=present login_user=root login_password=password' -u vagrant
-ansible c7db -m mysql_db -a 'name=appdb login_user=root login_password=password' -u vagrant
+# My servers
+	# cat /etc/ansible/hosts
+	[c7web]
+	192.168.122.109
+	[c7db]
+	192.168.122.207
+	[c7adm]
+	192.168.122.107
+
+	# ansible c7db -b -m yum -a 'name=mariadb-server state=present' -u vagrant
+	# ansible c7db -b -m service -a 'name=mariadb-server state=started enabled=yes' -u vagrant
+	# ansible c7db -b -m service -a 'name=mariadb state=started enabled=yes' -u vagrant
+	# ssh vagrant@192.168.122.207
+	# ansible c7db -b -m yum -a 'name=MySQL-python state=present' -u vagrant
+	# ansible c7db -b -m mysql_user -a 'name=root host=localhost password=password' -u vagrant
+	# ssh vagrant@192.168.122.207
+	# ansible c7db -m mysql_user -a 'name=codeigniter host=% password=cipassword priv=appdb.*:ALL state=present login_user=root login_password=password' -u vagrant
+	# ansible c7db -m mysql_db -a 'name=appdb login_user=root login_password=password' -u vagrant
+# Configure EPEL and Webtatic repositories on the web server machine.
+	# ansible c7web -b -m yum_repository -a "name=epel description='EPEL Repository' baseurl='https://download.fedoraproject.org/pub/epel/\$release/\$basearch/' gpgcheck=no state=present" -u vagrant
+	# ansible c7web -b -m yum_repository -a "name=webtatic description='Webtatic Repository' baseurl='https://repo.webtatic.com/yum/el7/\$basearch/' gpgcheck=no state=present" -u vagrant
+# Add the developers group and the codeigniter user.
+	# ansible c7web -b -m group -a "name=developers state=present" -u vagrant
+	# ansible c7web -b -m user -a "name=cidev group=developers state=present" -u vagrant
+	# ansible c7web -b -m user -a "name=cidev group=developers comment=This is the codeigniter user." -u vagrant
+# Install jq and run the stat command using ansible.
+	# dnf -y install jq
+	# ansible c7web -m stat -a 'path=/etc/hosts' -u vagrant
+	# ansible c7web -m stat -a 'path=/etc/hosts' -u vagrant | sed 's/.*SUCCESS.*=> //g'
+	# ansible c7web -m stat -a 'path=/etc/hosts' -u vagrant | sed 's/.*SUCCESS.*=> //g' | jq '.stat' | {perms: .mode, group: .gr_name, owner: .pw_name}'
+# Copy file to the target server(s).
+	# echo "Welcome to Ansible." > welcome.txt
+	# ansible c7web -m copy -a src=welcome.txt dest=/tmp/welcome.txt -u vagrant
+# Transfer files or directories to Ansible target server.
+	Transfer entire directory:
+	# ansible c7web -m copy -a 'src=items dest=/tmp/' -u vagrant
+	Transfer files only:
+	# ansible c7web -m copy -a 'src=items/ dest=/tmp/' -u vagrant
