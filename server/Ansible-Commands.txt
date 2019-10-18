@@ -36,3 +36,26 @@
 	# ansible c7web -m copy -a 'src=items dest=/tmp/' -u vagrant
 	Transfer files only:
 	# ansible c7web -m copy -a 'src=items/ dest=/tmp/' -u vagrant
+# Create files and links:
+	# ansible c7web -m file -a 'dest=/home/vagrant/newfile.txt' -u vagrant
+	# ansible c7web -m copy -a 'content="" dest=/home/vagrant/newfile.txt' -u vagrant
+	# ansible -b c7web -m file -a 'dest=/home/vagrant/newfile.txt owner=cidev group=developers mode=700' -u vagrant
+	# ansible c7web -m file -a 'src=/etc/hosts dest=/tmp/hosts state=link' -u vagrant
+# Delete a file:
+	# ansible c7web -m file -a 'path=/home/vagrant/newfile.txt state=absent' -u vagrant
+# Create a directory:
+	# ansible -b c7web -m file -a 'path=/home/vagrant/newdir mode=700 owner=cidev group=developers state=directory' -u vagrant
+# Delete a directory:
+	# ansible -b c7web -m file -a 'path=/home/vagrant/newdir state=absent' -u vagrant
+
+# Add a cronjob:
+	# ansible all -b -m cron -a "name=archive-logs hour=0 job='/opt/job/archive.sh'" -u vagrant
+
+# Modify a cronjob:
+	# ansible all -b -m cron -a "name=archive-logs hour=0 day=1 job='/opt/job/archive.sh'" -u vagrant
+	# ansible all -b -m cron -a "name=archive-logs hour=0 day=1 job='/opt/job/archive.sh'" -u vagrant
+	# ansible all -b -m cron -a "name=archive-logs special_time=hourly job='/opt/job/archive.sh'" -u vagrant
+	# ansible all -b -m cron -a "name=archive-logs user=cidev special_time=hourly job='/opt/job/archive.sh'" -u vagrant
+# Delete a cronjob:
+	# ansible all -b -m cron -a "name=archive-logs user=cidev state=absent" -u vagrant
+	# ansible all -b -m cron -a "name=archive-logs state=absent" -u vagrant
