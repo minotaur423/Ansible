@@ -1,0 +1,32 @@
+1. Install Apache web server:
+    $ ansible target1 -b -m yum -a name=httpd state=present --ask-become-pass
+
+2. Change hostname of target1 to webserver1 and target2 to database:
+    $ ansible target1 -b -m hostname -a "name=webserver1" --ask-become-pass
+    $ ansible target2 -b -m hostname -a "name=database" --ask-become-pass
+
+3. Install MariaDB on target2:
+    $ ansible target2 -b -m yum -a name=mariadb-server state=present --ask-become-pass
+
+4. Ensure the MariaDB service is started and enabled:
+    $ ansible target2 -b -m service -a "name=mariadb state=started enabled=yes" --ask-become-pass
+
+5. Install LAMP stack requirements for PHP and Python:
+    $ ansible target2 -b -m yum -a name=python3-PyMySQL state=present --ask-become-pass
+    $ ansible target2 -b -m yum -a name=php-mysqlnd state=present --ask-become-pass
+
+6. Set the root password:
+    $ ansible target2 -b -m mysql_user -a "name=root host=localhost password=password" --ask-become-pass
+
+7. Create the appdb database:
+    $ ansible target2 -b -m mysql_db -a "name=appdb state=present login_user=root login_password=password" --ask-become-pass
+
+8. Create the CodeIgniter PHP framework application user:
+    $ ansible target2 -b -m mysql_user -a "name=codeigniter host=% password=cipassword priv=appdb.*:ALL state=present login_user=root login_password=password" --ask-become-pass
+
+9. Install the MySQL client on Target1 server:
+    $ ansible target1 -b -m yum -a "name=mysql" --ask-become-pass
+
+10. Modify firewall settings for web server and database server:
+    $ ansible target1 -b -m firewalld -a "service=http permanent=yes state=enabled" --ask-become-pass
+    $ ansible target2 -b -m firewalld -a "service=mysql permanent=yes state=enabled" --ask-become-pass

@@ -1,0 +1,7 @@
+-
+  name: 'Rename host'
+  hosts: target1
+  tasks:
+    -
+        hostname:
+            name: webserver1
