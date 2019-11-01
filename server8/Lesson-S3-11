@@ -1,0 +1,27 @@
+Configure EPEL and Webtatic repositories on the web server machine:
+
+$ ansible target1 -b -m yum_repository -a "name=epel description='EPEL Repository' baseurl='https://download.fedoraproject.org/pub/epel/\$releasever/\$basearch/' gpgcheck=no state=present"
+
+$ ansible target1 -b -m yum_repository -a "name=webtatic description='Webtatic Repository' baseurl='https://repo.wetatic.com/yum/el7/\$basearch/' gpgcheck=no state=present" --ask-become-pass
+
+Create user:
+$ ansible target1 -b -m group -a "name=developers state=present" --ask-become-pass
+$ ansible target1 -b -m user -a "name=cidev group=developers" --ask-become-pass
+$ ansible target1 -b -m user -a "name=cidev group=developers comment='This is the codeigniter user'" --ask-become-pass
+
+Get contents of the password file:
+$ ansible target1 -b -a 'cat /etc/passwd' --ask-become-pass
+
+Query file attributes:
+$ ansible target1 -m stat -a 'path=/etc/hosts'
+
+$ sudo dnf -y install jq
+$ ansible target1 -m stat -a 'path=/etc/hosts' | sed 's/.*SUCCESS.*=> //g' | jq '.stat | {perms: .mode, group: .gr_name, owner: .pw_name}'
+
+To copy a file/directory to a remote machine:
+$ ansible target1 -m copy -a 'src=welcome.txt dest=/tmp/welcome.txt'
+
+To create a directory called /tmp/tools:
+$ ansible target1 -m copy -a 'src=tools/ dest=/tmp/'
+
+
