@@ -1,7 +1,6 @@
 Configure EPEL and Webtatic repositories on the web server machine:
 
-$ ansible target1 -b -m yum_repository -a "name=epel description='EPEL Repository' baseurl='https://download.fedoraproject.org/pub/epel/\$releasever/\$basearch/' gpgcheck=no state=present"
-
+$ ansible target1 -b -m yum_repository -a "name=epel description='EPEL Repository' baseurl='https://download.fedoraproject.org/pub/epel/\$releasever/\$basearch/' gpgcheck=no state=present" ansible target1 -b -m user -a "name=cidev group=developers comment='This is the codeigniter user'" --ask-become-pass
 $ ansible target1 -b -m yum_repository -a "name=webtatic description='Webtatic Repository' baseurl='https://repo.wetatic.com/yum/el7/\$basearch/' gpgcheck=no state=present" --ask-become-pass
 
 Create user:
@@ -23,5 +22,46 @@ $ ansible target1 -m copy -a 'src=welcome.txt dest=/tmp/welcome.txt'
 
 To create a directory called /tmp/tools:
 $ ansible target1 -m copy -a 'src=tools/ dest=/tmp/'
+
+To transfer a directory with files to target1:
+$ ansible target1 -m copy -a 'src=items dest=/tmp/'
+
+To transfer files only to target1:
+$ ansible target1 -m copy -a 'src=items/ dest=/tmp/'
+
+To download the /etc/hosts file from webserver and database:
+$ ansible all -m fetch -a 'src=/etc/hosts dest=/tmp'
+
+To create a file in target1:
+$ ansible target1 -m copy -a 'content="" dest=/tmp/newfile.txt'
+
+To change new file attributes:
+$ ansible target1 -b -m file -a 'path=/tmp/newfile.txt owner=cidev group=developers mode=700' --ask-become-pass
+
+To create a symbolic link:
+$ ansible target1 -m file -a 'src=/etc/hosts dest=/tmp/hosts state=link'
+
+To delete a file in target1 or folder:
+$ ansible target1 -b -m file -a 'path=/tmp/newfile.txt state=absent' --ask-become-pass
+
+To create a folder in target1:
+$ ansible target1 -b -m file -a 'path=/tmp/newdir mode=700 owner=cidev group=developers state=directory' --ask-become-pass
+
+To delete a directory in target1:
+$ ansible target1 -b -m file -a 'path=/tmp/newdir state=absent' --ask-become-pass
+
+To add a cron job:
+$ ansible all -b -m cron -a "name=archive-log-files hour=0 job='/opt/jobs/archive.sh'" --ask-become-pass
+$ ansible target1 -b -m cron -a "name=archive-log-files user=cidev special_time=hourly job='/opt/jobs/archive.sh'" --ask-become-pass
+
+
+To check the cronjob for root:
+$ ansible target1 -b -a 'crontab -u root -l' --ask-become-pass
+
+To use a special time for a cronjob:
+$ ansible all -b -m cron -a "name=archive-log-files special_time=hourly job='/opt/jobs/archive.sh'" --ask-become-pass
+
+To delete a cronjob for a specific user:
+$ ansible target1 -b -m cron -a "name=archive-log-files user=cidev state=absent' --ask-become-pass
 
 
