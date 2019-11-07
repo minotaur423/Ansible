@@ -1,11 +1,11 @@
-ansible target1 -b -m yum -a name=httpd state=present --ask-become-pass
+ansible target1 -b -m yum -a 'name=httpd state=present' --ask-become-pass
 ansible target1 -b -m hostname -a "name=webserver1" --ask-become-pass
-ansible target2 -b -m yum -a name=mariadb-server state=present --ask-become-pass
+ansible target2 -b -m yum -a 'name=mariadb-server state=present' --ask-become-pass
 ansible target2 -b -m service -a "name=mariadb state=started enabled=yes" --ask-become-pass
-ansible target2 -b -m yum -a name=python3-PyMySQL state=present --ask-become-pass
-ansible target2 -b -m yum -a name=php-mysqlnd state=present --ask-become-pass
+ansible target2 -b -m yum -a 'name=python3-PyMySQL state=present' --ask-become-pass
+ansible target2 -b -m yum -a 'name=php-mysqlnd state=present' --ask-become-pass
 ansible target2 -b -m mysql_user -a "name=root host=localhost password=password" --ask-become-pass
 ansible target2 -b -m mysql_db -a "name=appdb state=present login_user=root login_password=password" --ask-become-pass
 ansible target2 -b -m mysql_user -a "name=codeigniter host=localhost password=cipassword priv=appdb.*:ALL state=present login_user=root login_password=password" --ask-become-pass
 
-ansible servers -b -a cat /etc/hosts --ask-become-pass
+ansible servers -b -a 'cat /etc/hosts' --ask-become-pass
