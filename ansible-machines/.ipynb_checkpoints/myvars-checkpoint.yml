@@ -1,5 +1,0 @@
- - hosts: web
-   tasks:
-     - copy:
-         content: 'My name is {{ uname }}, I am {{ age }} years old and I work as a {{ job }}'
-         dest: /home/vagrant/name.txt

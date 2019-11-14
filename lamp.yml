@@ -30,7 +30,7 @@
       yum: name=rsync state=present
     - name: Deploy and configure CodeIgniter
       synchronize: 
-          src: /vagrant/CodeIgniter-3.1.4/
+          src: /home/jsantos/github/Ansible/CodeIgniter-3.1.4/
           dest: /var/www/html/
     - name: Ensure that mod_rewrite is enabled
       lineinfile:
