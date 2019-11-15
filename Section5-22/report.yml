@@ -1,0 +1,13 @@
+- hosts: web
+  gather_facts: no
+  tasks:
+    - name: Install pip
+      become: yes
+      yum:
+        name: python2-pip
+        state: present
+    - name: Install requests using pip
+      become: yes
+      command: pip install requests
+      # register: pip_output
+      # changed_when: "'Downloading' in pip_output.stdout"

@@ -1,0 +1,8 @@
+- hosts: all
+  handlers:
+    - include: restart_ntp.yml
+  tasks:
+    - include: ntp_client.yml
+      become: yes
+      vars:
+        ntp_server: time.nist.gov

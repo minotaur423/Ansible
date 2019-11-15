@@ -1,0 +1,13 @@
+- hosts: web
+  tasks:
+    - name: Upload the script
+      copy:
+        src: /vagrant/admin.sh
+        dest: /home/vagrant
+        mode: 0755
+        
+    - name: Run admin script
+      become: yes
+      command: /home/vagrant/admin.sh
+      register: admin_result
+      failed_when: "'failed' in admin_result.stderr"

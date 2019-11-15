@@ -1,0 +1,16 @@
+- name: Install NTP client
+  yum:
+    name: ntp
+    state: present
+- name: Configure NTP client
+  template:
+    src: templates/etc/ntp.conf.jn2
+    dest: /etc/ntp.conf
+# - name: Perform initial time synchronization
+#   command: "ntpdate {{ ntp_server }}"
+- name: Start and enable the service
+  service:
+    name: ntpd
+    state: started
+    enabled: yes
+  notify: restart NTP

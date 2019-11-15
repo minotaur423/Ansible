@@ -1,0 +1,3 @@
+---
+# vars file for appserver
+installation_path: /var/www/html/codeigniter

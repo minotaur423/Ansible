@@ -1,0 +1,41 @@
+- hosts: web
+  become: yes
+  vars_files:
+    - db_vars.yml
+  roles:
+    - appserver
+  pre_tasks:
+    - name: Create developers group
+      group: 
+        name: developers
+        state: present
+    - name: Create cidev user
+      user:
+        name: cidev
+        comment: CodeIgniter user
+        group: developers
+        state: present
+  post_tasks:
+    - name: Change the oenwership of codeigniter directory to be owned by cidev user and developers group
+      file:
+        path: /var/www/html/application/
+        owner: cidev
+        group: developers
+        state: directory
+        recurse: yes
+    - name: Configure the application with the database settings
+      template:
+        src: templates/application/config/database.php.jn2
+        dest: /var/www/html/application/config/database.php
+    - name: Deploy sample CodeIgniter files
+      copy:
+        src: '{{ item.src }}'
+        dest: '{{ item.dest }}'
+      with_items:
+        - src: files/models/News_model.php
+          dest: /var/www/html/application/models/
+        - src: files/controllers/News.php
+          dest: /var/www/html/application/controllers/
+        - src: files/views/news_article.php
+          dest: /var/www/html/application/views/
+  

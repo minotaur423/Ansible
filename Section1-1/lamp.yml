@@ -1,21 +1,12 @@
-- hosts: web_nodes
+- hosts: web
   vars_files: 
     - db_vars.yml
   become: yes
-  become_method: sudo
   handlers:
-    - name: restart Apache
-      service: name=httpd state=restarted
+    # - name: restart Apache
+    #   service: name=httpd state=restarted
+    include: restart_apache.yml
   tasks:
-    - name: Change Hostname
-      hostname: name=webserver1
-    - name: Install Webtatic Repo
-      yum_repository:
-        name: webtatic
-        description: 'Webtatic Repository'
-        baseurl: 'https://repo.webtatic.com/yum/el7/\$basearch/'
-        gpgcheck: no
-        state: present
     - name: Ensure that Apache is installed
       yum: 
         name: httpd
@@ -27,8 +18,7 @@
         enabled: yes
     - name: Install PHP 7 most common packages
       yum: name={{ item }} state=present        
-      loop:
-        - epel-release         
+      with_items:            
         - mod_php71w
         - php71w-cli
         - php71w-common
@@ -41,9 +31,8 @@
       yum: name=rsync state=present
     - name: Deploy and configure CodeIgniter
       synchronize: 
-          src: CodeIgniter-3.1.4/
+          src: /vagrant/CodeIgniter-3.1.4/
           dest: /var/www/html/
-          rsync_path: '/usr/bin/sudo /usr/bin/rsync'
     - name: Ensure that mod_rewrite is enabled
       lineinfile:
         path: /etc/httpd/conf.modules.d/00-base.conf 
@@ -64,7 +53,7 @@
         group: developers
         state: present
   post_tasks:
-    - name: Change the ownership of codeigniter directory to be owned by cidev user and developers group
+    - name: Change the oenwership of codeigniter directory to be owned by cidev user and developers group
       file:
         path: /var/www/html/application/
         owner: cidev
@@ -79,25 +68,23 @@
       copy:
         src: '{{ item.src }}'
         dest: '{{ item.dest }}'
-      loop:
+      with_items:
         - src: files/models/News_model.php
           dest: /var/www/html/application/models/
         - src: files/controllers/News.php
           dest: /var/www/html/application/controllers/
         - src: files/views/news_article.php
           dest: /var/www/html/application/views/
-- hosts: db_nodes
+- hosts: db
   vars_files: 
     - db_vars.yml
   become: yes
   tasks:
-    - name: Change Hostname
-      hostname: name=database
-    - name: Ensure that Mariadb is installed
+    - name: Ensure that Maridb is installed
       yum:
         name: '{{ item }}'
         state: present
-      loop:
+      with_items:
         - MySQL-python
         - mariadb-server
     - name: Ensure that mariadb is started and enabled

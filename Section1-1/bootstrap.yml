@@ -1,0 +1,12 @@
+- hosts: web
+
+  tasks:
+    - name: Print the output of /etc/hosts and store it in a variable
+      shell: cat /etc/hosts
+      register: hosts_file_contents
+
+    - include: dns_include.yml
+      become: yes
+      vars:
+        dns_server: 192.168.33.100 #Fictional IP address
+      when: hosts_file_contents.stdout.find('192.168.33.30') == -1

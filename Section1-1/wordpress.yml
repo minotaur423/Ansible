@@ -1,0 +1,30 @@
+- hosts: db
+  tasks:
+    - mysql_db:
+        name: wordpress
+        state: present
+        login_user: root
+        login_password: adminpassword
+    - mysql_user:
+        name: wordpress
+        password: wordpress
+        priv: 'wordpress.*:ALL'
+        host: '%'
+        login_user: root
+        login_password: adminpassword
+- hosts: web
+  become: yes
+  vars:
+    wp_install_dir: /var/www/html/wordpress
+    wp_version: 4.7
+    wp_db_name: wordpress
+    wp_db_user: wordpress
+    wp_db_password: wordpress
+    wp_db_host: 192.168.33.30
+  pre_tasks:
+    - name: Add a www-data user for Wordpress
+      user:
+        name: www-data
+        state: present
+  roles:
+    - darthwade.wordpress

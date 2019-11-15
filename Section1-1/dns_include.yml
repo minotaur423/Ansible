@@ -1,0 +1,2 @@
+- name: Use the DNS server if no entry for database server is found in the hosts file
+  shell: 'echo nameserver "{{ dns_server }}" > /etc/resolv.conf'
