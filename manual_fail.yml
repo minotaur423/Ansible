@@ -1,18 +1,18 @@
- - hosts: web
+ - hosts: web_nodes
    tasks:
      - name: Upload the script
        copy:
-         src: /home/vagrant/admin.sh
-         dest: /home/vagrant
+         src: /home/jsantos/github/Ansible/admin.sh
+         dest: /home/jsantos
          mode: 0755
 
      - name: Run admin script
        become: yes
-       command: /home/vagrant/admin.sh
+       command: /home/jsantos/admin.sh
        register: admin_result
        failed_when: "'failed' in admin_result.stdout"
 
      - name: Report the command ran successfully
        copy:
-         dest: /home/vagrant/result
+         dest: /home/jsantos/result
          content: "admin.sh ran successfully"

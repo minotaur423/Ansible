@@ -1,7 +1,8 @@
-- hosts: web
+- hosts: web_nodes
   vars_files: 
     - db_vars.yml
   become: yes
+  become_method: sudo
   handlers:
     - name: restart Apache
       service: name=httpd state=restarted
@@ -17,7 +18,7 @@
         enabled: yes
     - name: Install PHP 7 most common packages
       yum: name={{ item }} state=present        
-      with_items:            
+      loop:            
         - mod_php71w
         - php71w-cli
         - php71w-common
@@ -32,6 +33,7 @@
       synchronize: 
           src: /home/jsantos/github/Ansible/CodeIgniter-3.1.4/
           dest: /var/www/html/
+          rsync_path: /bin/rsync
     - name: Ensure that mod_rewrite is enabled
       lineinfile:
         path: /etc/httpd/conf.modules.d/00-base.conf 
@@ -74,7 +76,7 @@
           dest: /var/www/html/application/controllers/
         - src: files/views/news_article.php
           dest: /var/www/html/application/views/
-- hosts: db
+- hosts: db_nodes
   vars_files: 
     - db_vars.yml
   become: yes
