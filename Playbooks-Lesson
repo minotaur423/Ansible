@@ -1,2 +1,0 @@
-ansible-playbook lamp.yml --limit web --list-hosts
-ansible-playbook lamp.yml --list-hosts

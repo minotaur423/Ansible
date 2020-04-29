@@ -1,2 +1,0 @@
-target1 ansible_host=192.168.52.131 ansible_ssh_pass=password
-target2 ansible_host=192.168.52.132 ansible_ssh_pass=password

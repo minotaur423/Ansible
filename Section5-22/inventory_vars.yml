@@ -1,6 +1,0 @@
-- hosts: web
-  tasks:
-    - name: Write the name of the framework
-      copy:
-        dest: /home/vagrant/framework.txt
-        content: "Framework name is {{ framework }}"

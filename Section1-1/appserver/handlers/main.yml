@@ -1,4 +1,0 @@
----
-# handlers file for appserver
-- name: restart Apache
-  service: name=httpd state=restarted
