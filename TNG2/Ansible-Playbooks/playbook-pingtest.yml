@@ -1,6 +1,6 @@
 -
   name: Test connectivity to target servers
-  hosts: RHEL8
+  hosts: all
   tasks:
     - name: Ping Test
       ping:
