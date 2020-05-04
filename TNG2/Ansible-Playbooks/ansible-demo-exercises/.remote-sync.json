@@ -1,0 +1,19 @@
+{
+  "logger": {
+    "title": "Remote Sync"
+  },
+  "transport": "scp",
+  "hostname": "10.0.23.240",
+  "port": "22",
+  "username": "jsantos",
+  "password": "jsmd@2329",
+  "target": "/home/jsantos//github/Ansible/TNG2/Ansible-Playbooks/ansible-demo-exercises",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**"
+  ],
+  "uploadOnSave": true,
+  "useAtomicWrites": false,
+  "deleteLocal": true,
+  "watch": []
+}
