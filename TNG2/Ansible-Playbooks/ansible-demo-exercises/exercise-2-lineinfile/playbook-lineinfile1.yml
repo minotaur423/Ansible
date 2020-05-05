@@ -1,0 +1,10 @@
+-
+  name: Add DNS entry in resolv.conf file of each server
+  hosts: all
+  tasks:
+    -
+      lineinfile:
+        path: /etc/resolv.conf
+        line: 'nameserver 10.0.23.1'
+        state: absent
+      become: true

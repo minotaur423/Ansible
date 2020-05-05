@@ -6,19 +6,25 @@
       lineinfile:
         path: /etc/hosts
         line: '192.168.4.140    dockansi.example.com    dockansi'
+        state: present
     -
       lineinfile:
         path: /etc/hosts
         line: '192.168.4.141    web1.example.com    web1'
+        state: present
     -
       lineinfile:
         path: /etc/hosts
         line: '192.168.4.142    db1.example.com    db1'
+        state: present
     -
       lineinfile:
         path: /etc/hosts
         line: '192.168.4.131    tgt1.example.com    tgt1'
+        state: present
     -
       lineinfile:
         path: /etc/hosts
         line: '192.168.4.132    tgt2.example.com    tgt2'
+        state: present
+  become: true
