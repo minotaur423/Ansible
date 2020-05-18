@@ -5,11 +5,12 @@
 - pears
 
 # Dictionary of cars
-Toyota:
-    model: Corolla
-    year: 2020
-    color: Red
-    doors: 4
+-
+    Toyota:
+        model: Corolla
+        year: 2020
+        color: Red
+        doors: 4
 
 # List of dictionaries
 -
@@ -26,32 +27,34 @@ Toyota:
     weight: 50g
 
 # Create an array of employees
-employees:
-    -
+-
+    employees:
+        -
+            name: Jose
+            gender: Male
+            age: 24
+        -
+            name: Maria
+            gender: Female
+            age: 23
+
+# Add address informatio as a dictionary.
+-
+    employee:
         name: Jose
         gender: Male
         age: 24
-    -
-        name: Maria
-        gender: Female
-        age: 23
-
-# Add address informatio as a dictionary.
-employee:
-    name: Jose
-    gender: Male
-    age: 24
-    address:
-        city: Linden
-        state: New Jersey
-        country: United States
-    payslips:
-        -
-            month: June
-            amount: 1400
-        -
-            month: July
-            amount: 2400
-        -
-            month: August
-            amount: 3400
+        address:
+            city: Linden
+            state: New Jersey
+            country: United States
+        payslips:
+            -
+                month: June
+                amount: 1400
+            -
+                month: July
+                amount: 2400
+            -
+                month: August
+                amount: 3400
