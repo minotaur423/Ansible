@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks:
+    - name: "Copy a file"
+      copy:
+        src: /tmp/xyz
+        dest: /tmp
+        owner: jsantos
+        group: root
+        mode: '777'
+      when: ansible_distribution == "RedHat"
+...

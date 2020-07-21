@@ -1,0 +1,10 @@
+---
+- hosts: ftp
+  become: true
+  become_user: root
+  tasks:
+    - name: "Stop vsftpd service"
+      service: name=vsftpd state=stopped
+    - name: "Remove vsftpd"
+      package: name=vsftpd state=absent
+...
