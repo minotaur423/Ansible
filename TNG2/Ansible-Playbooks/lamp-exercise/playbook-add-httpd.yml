@@ -1,0 +1,9 @@
+-
+    name: 'Check that Apache web service is installed on nodes'
+    hosts: rhel8
+    tasks:
+        -
+            name: 'Install Apache, if necessary'
+            dnf: name=httpd state=present
+        -   name: 'Start and enable Apache2'
+            service: name=httpd.service state=started enabled=yes

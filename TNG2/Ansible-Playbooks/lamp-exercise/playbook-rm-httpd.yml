@@ -1,0 +1,9 @@
+-
+    name: 'Check that Apache web service is uninstalled on all nodes'
+    hosts: rhel8
+    tasks:
+        -   name: 'Stop and disable Apache2'
+            service: name=httpd.service state=stopped enabled=no
+        -
+            name: 'Uninstall Apache, if necessary'
+            dnf: name=httpd state=absent
