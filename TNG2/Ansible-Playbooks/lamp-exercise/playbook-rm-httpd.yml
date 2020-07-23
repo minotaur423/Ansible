@@ -1,10 +1,30 @@
 ---
-- hosts: web
+- hosts: 192.168.11.31
   become: true
   become_user: root
   tasks:
-    - name: 'Check that Apache web service is uninstalled on all nodes'
-      service: name=httpd.service state=stopped enabled=no
-    - name: 'Uninstall Apache, if necessary'
-      dnf: name=httpd state=absent
+    - name: 'Update Web Server Entry in /etc/hosts File'
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ ansible_default_ipv4['address'] }}  www.{{ ansible_nodename }}"
+        state: absent
+    - name: 'Delete html page'
+      file:
+        path: /var/www/html/index.html
+        state: absent
+    - name: 'Close port 80 on Firewall'
+      firewalld:
+        service: http
+        permanent: true
+        state: disabled
+        immediate: yes
+    - name: 'Stop and disable Apache2'
+      service: 
+        name: httpd
+        state: stopped
+        enabled: no
+    - name: 'Uninstall Latest Apache Web service'
+      package: 
+        name: httpd
+        state: absent
 ...

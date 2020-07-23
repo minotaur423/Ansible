@@ -1,0 +1,29 @@
+---
+- hosts: rhel7
+  become: true
+  become_user: root
+  tasks:
+      - name: Unmount the OS Media Drive
+        command: umount /mnt
+      - name: Delete the Local Repo File
+        file:
+          path: /etc/yum.repos.d/rhel7dvd.repo
+          state: absent
+        when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == '7'
+      - name: Stop the VSFTPD Service
+        service:
+          name: vsftpd
+          state: stopped
+      - name: Stop the HTTPD Service
+        service:
+          name: httpd
+          state: stopped
+          enabled: true
+      - name: Remove the VSFTPD Package
+        yum: 
+          name: vsftpd
+          state: absent
+      - name: Remove HTTPD Package
+        yum:
+          name: httpd
+          state: absent

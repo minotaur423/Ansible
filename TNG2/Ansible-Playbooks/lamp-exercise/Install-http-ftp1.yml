@@ -1,0 +1,36 @@
+---
+- hosts: rhel7
+  become: true
+  become_user: root
+  tasks:
+      - name: Mount the OS Media Drive
+        mount:
+          path: /mnt
+          src: /dev/sr0
+          fstype: iso9660
+          opts: ro
+          state: mounted
+        when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == '7'
+      - name: Copy the Local Repo File
+        copy:
+          src: /tmp/rhel7dvd.repo
+          dest: /etc/yum.repos.d
+        when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == '7'
+      - name: Install the VSFTPD Package
+        yum: 
+          name: vsftpd
+          state: latest
+      - name: Install HTTPD Package
+        yum:
+          name: httpd
+          state: latest
+      - name: Start & Enable the VSFTPD Service
+        service:
+          name: vsftpd
+          state: started
+          enabled: true
+      - name: Start & Enable the HTTPD Service
+        service:
+          name: httpd
+          state: started
+          enabled: true
