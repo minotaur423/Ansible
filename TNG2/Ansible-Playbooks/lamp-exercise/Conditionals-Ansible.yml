@@ -1,0 +1,13 @@
+---
+- hosts: web
+  become: true
+  become_user: root
+  tasks:
+    - name: Shutdown CentOS Systems
+      copy:
+        src: /tmp/abcd.txt
+        dest: /tmp
+        owner: jsantos
+        group: root
+        mode: '777'
+      when: ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' or ansible_distribution == "RedHat" and ansible_distribution_major_version == '7'
