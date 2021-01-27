@@ -38,7 +38,7 @@
             gender: Female
             age: 23
 
-# Add address informatio as a dictionary.
+# Add address information as a dictionary.
 -
     employee:
         name: Jose
