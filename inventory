@@ -5,15 +5,21 @@
 192.168.11.34
 
 [cent8]
+192.168.11.30   ansible_connection=local
 192.168.11.41
 192.168.11.42
 192.168.11.43
 192.168.11.44
 
+[ubu]
+192.168.11.133
+
 [web]
 web7   ansible_host=client7-1.home.local   ansible_connection=ssh ansible_user=jsantos
 web8   ansible_host=client8-1.home.local   ansible_connection=ssh ansible_user=jsantos
+webU    ansible_host=ubuntu.home.local          ansible_connection=ssh  ansible_user=jsantos
 
 [db]
 db7    ansible_host=client7-2.home.local   ansible_connection=ssh ansible_user=jsantos
 db8    ansible_host=client8-2.home.local   ansible_connection=ssh ansible_user=jsantos
+db11    ansible_host=solaris.home.local         ansible_connection=ssh  ansible_user=jsantos
