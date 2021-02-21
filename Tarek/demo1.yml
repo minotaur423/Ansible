@@ -1,0 +1,13 @@
+---
+- name: Create a file
+  hosts: localhost
+  gather_facts: true
+  tasks: 
+    - name: Print hostname
+      shell: hostname
+      register: pc_name
+
+    - name: Test the output
+      debug: 
+         msg: "{{ pc_name.stdout }}"
+

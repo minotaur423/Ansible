@@ -1,0 +1,8 @@
+---
+- name: Create a file
+  hosts: all localhost
+  tasks: 
+    - name: Create file testing
+      file: 
+        path: /export/home/jsantos/google.txt
+        state: absent

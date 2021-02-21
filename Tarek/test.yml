@@ -1,0 +1,9 @@
+---
+- name: Test
+  hosts: localhost
+  gather_facts: true
+  tasks:
+          - name: Copy file
+            copy:
+                    src: /var/tmp/demo.txt
+                    dest: /tmp
