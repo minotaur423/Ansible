@@ -1,0 +1,20 @@
+---
+# A list of tasty fruits.
+- Apple
+- Orange
+
+# An employee record.
+martin:
+  name: 'Martin Developer'
+  job: Developer
+  skill: Elite
+
+- martin:
+  - name: 'Martin Developer'
+    job: Developer
+    skills:
+      - python
+      - perl
+      - pascal
+
+-

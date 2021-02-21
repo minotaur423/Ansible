@@ -1,0 +1,8 @@
+---
+- name: Create a file
+  hosts: all
+  tasks: 
+    - name: Create file testing
+      file: 
+        path: /home/jsantos/google.txt
+        state: touch
